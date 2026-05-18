@@ -1,114 +1,93 @@
-# API de Finanças Pessoais 💰
+# API de Finanças Pessoais
 
-Uma API REST simples para gerenciar finanças pessoais, construída com Python e FastAPI.
+API REST para gerenciar receitas e despesas, feita com FastAPI e SQLite.
 
-## 📌 Sobre o Projeto
+Este projeto foi feito para meu portfólio e mostra como criar uma API com autenticação JWT, banco de dados e CRUD completo.
 
-Projeto de portfólio para demonstrar habilidades em:
-- APIs REST com FastAPI
-- Banco de dados com SQLAlchemy
-- Autenticação com JWT
-- CRUD completo
+## Tecnologias usadas
 
-## 🛠️ Tecnologias
+- Python 3.12
+- FastAPI
+- SQLAlchemy (ORM)
+- SQLite
+- Pydantic (validação)
+- JWT (autenticação)
+- Bcrypt (hash de senha)
 
-- **Python 3.11+**
-- **FastAPI** — Framework web
-- **SQLAlchemy** — ORM
-- **SQLite** — Banco de dados
-- **Pydantic** — Validação de dados
-- **JWT** — Autenticação
+## Como rodar
 
-## 📁 Estrutura
+Primeiro instala as dependências:
+
+```
+pip install -r requirements.txt
+```
+
+Depois roda a API:
+
+```
+uvicorn app.main:app --reload
+```
+
+A API vai rodar em http://localhost:8000
+
+A documentação automática (Swagger) fica em http://localhost:8000/docs — dá pra testar os endpoints direto pelo navegador.
+
+## O que a API faz
+
+### Autenticação
+
+- `POST /auth/register` — cria uma conta nova
+- `POST /auth/login` — faz login e retorna o token JWT
+- `GET /auth/me` — mostra os dados do usuário logado (precisa estar autenticado)
+
+### Categorias
+
+- `GET /categories` — lista todas as categorias
+- `POST /categories` — cria uma categoria nova
+- `PUT /categories/{id}` — atualiza uma categoria
+- `DELETE /categories/{id}` — deleta uma categoria
+
+### Transações
+
+Todas as rotas de transação precisam de autenticação (token JWT no header).
+
+- `GET /transactions` — lista as transações do usuário logado. Dá pra filtrar por tipo passando `?tipo=receita` ou `?tipo=despesa`
+- `GET /transactions/{id}` — busca uma transação pelo ID
+- `POST /transactions` — cria uma transação nova
+- `PUT /transactions/{id}` — atualiza uma transação
+- `DELETE /transactions/{id}` — deleta uma transação
+
+## Como usar a autenticação
+
+1. Cria uma conta mandando um POST pra `/auth/register` com nome, email e senha
+2. Faz login no `/auth/login` com email e senha — vai voltar um token
+3. Usa esse token nos próximos requests no header: `Authorization: Bearer <token>`
+
+Ou se preferir, abre o Swagger em `/docs` e clica no cadeado no topo pra colocar o token lá.
+
+## Estrutura do projeto
 
 ```
 api-financas/
 ├── app/
-│   ├── main.py          # Ponto de entrada
-│   ├── database.py      # Configuração do banco
-│   ├── models.py        # Tabelas do banco
-│   ├── schemas.py       # Validação de dados
-│   ├── auth.py          # Autenticação JWT
-│   ├── seed.py          # Dados iniciais
+│   ├── main.py           # ponto de entrada da API
+│   ├── database.py       # configuração do banco de dados
+│   ├── models.py         # tabelas (Usuario, Transacao, Categoria)
+│   ├── schemas.py        # validação dos dados com Pydantic
+│   ├── auth.py           # funções de autenticação JWT
+│   ├── seed.py           # script pra criar categorias padrão
 │   └── routes/
-│       ├── auth.py      # Login e registro
-│       ├── transactions.py  # CRUD transações
-│       └── categories.py    # CRUD categorias
+│       ├── auth.py       # rotas de login e registro
+│       ├── transactions.py  # rotas de transações
+│       └── categories.py    # rotas de categorias
 ├── requirements.txt
 └── README.md
 ```
 
-## 🚀 Como Rodar
+## O que aprendi fazendo esse projeto
 
-### 1. Instalar dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 2. Rodar a API
-
-```bash
-uvicorn app.main:app --reload
-```
-
-### 3. Acessar
-
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
-
-## 📖 Endpoints
-
-### Autenticação
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/auth/register` | Criar conta |
-| POST | `/auth/login` | Login |
-| GET | `/auth/me` | Meu perfil |
-
-### Categorias
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/categories` | Listar todas |
-| POST | `/categories` | Criar |
-| PUT | `/categories/{id}` | Atualizar |
-| DELETE | `/categories/{id}` | Deletar |
-
-### Transações (requer login)
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/transactions` | Listar (filtro: `?tipo=receita`) |
-| GET | `/transactions/{id}` | Buscar |
-| POST | `/transactions` | Criar |
-| PUT | `/transactions/{id}` | Atualizar |
-| DELETE | `/transactions/{id}` | Deletar |
-
-## 🔐 Como usar
-
-### 1. Criar conta
-```json
-POST /auth/register
-{
-  "nome": "João",
-  "email": "joao@email.com",
-  "senha": "123456"
-}
-```
-
-### 2. Login
-```json
-POST /auth/login
-{
-  "email": "joao@email.com",
-  "senha": "123456"
-}
-```
-
-### 3. Usar token
-```
-Authorization: Bearer <token>
-```
-
----
-
-Desenvolvido para portfólio pessoal
+- Como criar uma API REST com FastAPI
+- Como usar SQLAlchemy pra criar tabelas e fazer queries
+- Como funciona autenticação com JWT (criar token, validar, proteger rotas)
+- Como hashear senhas com bcrypt
+- Como organizar o projeto em arquivos separados (models, schemas, routes)
